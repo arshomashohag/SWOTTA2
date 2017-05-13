@@ -1,0 +1,18 @@
+.list-group-item-text{
+    margin-top: 20px; 
+}
+
+.item{
+    margin: 10px 0px 10px 0px;
+    
+}
+.inneritem{
+    padding: 5px;
+}
+
+.item:hover{
+    background: rgb(239, 241, 244);
+    border-radius: 5px;
+     
+}
+

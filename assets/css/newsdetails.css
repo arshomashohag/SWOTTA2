@@ -1,0 +1,42 @@
+.bodysection{
+	margin-top: 10px;
+}
+
+.bodyhead{
+	height: 80px;
+	width: 100%; 
+
+}
+.bodyhead i{
+	color: #e98000;
+}
+.contentcontainer h3{
+	font-size: 18px;
+}
+
+
+.bodyhead span{
+	font-size: 20px;
+	font-weight: bold;
+	font-style: italic;
+}
+
+.created{
+	font-weight: bold;
+	font-style: italic;
+ }
+
+ img{
+ 	max-width: 100%;
+ 	max-height: 380px;
+ }
+
+ .newsbody{
+ 	line-height: 20px;
+ }
+
+ .panel-body{
+ 	line-height: 20px;
+ }
+
+  
