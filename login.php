@@ -1,45 +1,59 @@
 <?php
-        include "php/dbConnection.php";
-        include "php/allFunctions.php";
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+         
+        include_once("php/allFunctions.php");
         include_once('php/indexModel.php');
-        ob_start();
-        session_start();
+
+
+       
 
          $msg=null;
 
          $advertisement = getAdvertisement();
         $numAdd = count($advertisement);
 
+
+
          if(isset($_SESSION['email'])){
+
             $msg = "Already Logged In !!";
+            //header('Location: index.php');
         }  
       
      
      else{
 
-      if(isset($_POST['login'])){
-       $email = $_POST['email'];
-       $password = $_POST['password'];
-
-       $msg = signin_checking($email, $password);
+              if(isset($_POST['login'])){
 
 
-       if($msg=='admin'){
-        $_SESSION['admin']='admin';
-        $_SESSION['email']=$email;
-        header("Location: admin.php"); 
-        
-       }
-       else if(is_numeric($msg)){
-         $_SESSION['id'] = $msg ;
-         $_SESSION['email']=$email ;
+               $email = $_POST['email'];
+               $password = $_POST['password'];
 
-        header("Location: index.php");
-       }
+               $msg = signin_checking($email, $password);
 
 
-        
-      } 
+               if($msg=="admin"){
+                 
+                $_SESSION['admin']='admin';
+                $_SESSION['email']=$email;
+
+                //header("Location: https://developingsense.com/swotta/admin.php"); 
+                
+               }
+               elseif(is_numeric($msg)){
+
+
+                 $_SESSION['id'] = $msg ;
+                 $_SESSION['email'] = $email ;
+
+                //header("Location: https://developingsense.com/swotta/index.php");
+               }
+
+
+                
+              } 
 
     }
        
@@ -61,13 +75,15 @@
 <link rel="stylesheet" type="text/css" href="assets/css/responsive.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="assets/css/jquery.bxslider.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="assets/css/contact.css">
+<link rel="shortcut icon" type="image/png" href="images/icon/favicon.png"/>
+
 
 </head>
 <body>
 <div class="body_wrapper">
   <div class="center">
     <div class="header_area">
-      <div class="logo floatleft"><a href="#"><img src="images/logo12.png" alt="" /></a></div>
+      <div class="logo floatleft"><a href="index.php"><img src="images/logo12.png" alt="" /></a></div>
        <br>
        <br>
        <br>
@@ -75,7 +91,7 @@
       <span class="top_menu">
         <ul>
           <li><a href="index.php">Home</a></li>
-          <li><a href="#">About</a></li>
+          <li><a href="about.php">About</a></li>
           <li><a href="contact.php">Contact us</a></li>
           <li><a href="newsletters.php">Subscribe</a></li>
            <?php 
@@ -117,21 +133,23 @@
                                     
                                          <?php
                     if ( isset($msg) ) {
-                        if($msg!='ok' && $msg!='admin'){
+                        if(is_numeric($msg) || $msg==='admin'){
 
+                           print('<div class="form-group">
+                            <div class="alert alert-success" style="font-size: 16px">
+                              You are Logged In
+                            </div>
+                        </div>'); 
+
+                         
+                       }
+                       else{
                          printf('<div class="form-group">
                             <div class="alert alert-danger" style="font-size: 16px">
                                  %s
                             </div>
                         </div>',$msg);
-                       }
-                       else{
-
-                          print('<div class="form-group">
-                            <div class="alert alert-success" style="font-size: 16px">
-                              You are Logged In
-                            </div>
-                        </div>'); 
+                         
                        }
 
 

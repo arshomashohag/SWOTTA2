@@ -1,14 +1,19 @@
 
 <?php
-        include "php/dbConnection.php";
-        include "php/allFunctions.php";
+         
+        include_once("php/allFunctions.php");
         include_once('content.php');
+        include_once('php/aboutModel.php');
 
         ob_start();
         session_start();
 
-         if(!isset($_SESSION['email']) || !isset($_SESSION['admin'])){
+         if(!isset($_SESSION['admin'])){
+
             header("Location: index.php");
+
+            include('php/error.php');
+            return;
         }  
 
       if(isset($_POST['signup']))
@@ -40,6 +45,10 @@ if(isset($_POST['addadmn'])){
 
  $catresult = getCategory();
 
+ function br2nl( $input ) {
+    return preg_replace('/<br\s?\/?>/ius', "\n", str_replace("\n","",str_replace("\r","", htmlspecialchars_decode($input))));
+}
+
 ?>
 
 
@@ -67,6 +76,8 @@ if(isset($_POST['addadmn'])){
 <link rel="stylesheet" type="text/css" href="assets/css/jquery.bxslider.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="assets/css/contact.css"/>
 <link rel="stylesheet" type="text/css" href="assets/css/newsdetails.css"/>
+<link rel="shortcut icon" type="image/png" href="images/icon/favicon.png"/>
+
 
 
 
@@ -217,6 +228,36 @@ if(isset($_POST['addadmn'])){
                     return; 
    }
 
+
+   function deleteFeature(id ){
+      var xmlhttp;
+      // var show = name+"id";
+       
+          if (window.XMLHttpRequest){
+
+                                  xmlhttp = new XMLHttpRequest();
+
+                                  }
+
+                                   else{ 
+                                     xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+                                  }
+
+                               xmlhttp.onreadystatechange = function(){
+                                 
+                                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                                        document.getElementById("featuresid").innerHTML = xmlhttp.responseText;
+                                    }
+
+                               }
+
+                              xmlhttp.open("GET", "deleteFeature.php?id="+id, true);
+                              xmlhttp.send();
+                            
+                    return;  
+  }
+
+
    function sendReply(id){
 
         var xmlhttp;
@@ -256,6 +297,42 @@ if(isset($_POST['addadmn'])){
                     return;  
 
    }
+
+   function deleteAbout(id){
+
+        var xmlhttp;
+         
+    
+      
+          if (window.XMLHttpRequest){
+
+                                  xmlhttp = new XMLHttpRequest();
+
+                                  }
+
+                                   else{ 
+                                     xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+                                  }
+
+                               xmlhttp.onreadystatechange = function(){
+                                 
+                                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+
+                                         document.getElementById("aboutcontentbody").innerHTML = xmlhttp.responseText; 
+
+                                         
+                                    }
+
+                               }
+
+                              xmlhttp.open("GET", "php/aboutdeletehandler.php?id="+id, true);
+                              xmlhttp.send();
+                            
+                    return; 
+
+   }
+
+
 
    $(function(){
 
@@ -324,7 +401,7 @@ $(function(){
   <div class="center">
 
     <div class="header_area">
-      <div class="logo floatleft"><a href="#"><img src="images/logo12.png" alt="" /></a></div>
+      <div class="logo floatleft"><a href="index.php"><img src="images/logo12.png" alt="" /></a></div>
        <br>
        <br>
        <br>
@@ -332,7 +409,7 @@ $(function(){
       <span class="top_menu">
         <ul>
           <li><a href="index.php">Home</a></li>
-          <li><a href="#">About</a></li>
+          <li><a href="about.php">About</a></li>
           <li><a href="contact.php">Contact us</a></li>
           <li><a href="newsletters.php">Subscribe</a></li>
             <?php 
@@ -388,18 +465,23 @@ $(function(){
                  <ul class="nav nav-tabs" role="tablist">
                    <li role="presentation" class="active"><a href="#category" aria-controls="home" role="tab" data-toggle="tab">Category</a></li>
                    <li role="presentation" ><a href="#content" aria-controls="profile" role="tab" data-toggle="tab">Content</a></li>
+
                    <li role="presentation" ><a href="#article" aria-controls="profile" role="tab" data-toggle="tab">Article</a></li>
                    <li role="presentation" ><a href="#editorial" aria-controls="profile" role="tab" data-toggle="tab">Editorial</a></li>
-                   <li role="presentation" ><a href="#desk" aria-controls="profile" role="tab" data-toggle="tab">News Desk</a></li>
+                   <li role="presentation" ><a href="#desk" aria-controls="profile" role="tab" data-toggle="tab">Desk</a></li>
                    <li role="presentation" ><a href="#gallery" aria-controls="profile" role="tab" data-toggle="tab">Gallery</a></li>
-                   <li role="presentation" ><a href="#advertisement" aria-controls="profile" role="tab" data-toggle="tab">Add</a></li>
+                   <li role="presentation" ><a href="#advertisement" aria-controls="profile" role="tab" data-toggle="tab">Ad</a></li>
 
                     <li role="presentation" ><a href="#slider" aria-controls="profile" role="tab" data-toggle="tab">Slider</a></li>
                    
 
+                    <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Messages</a></li>
+
                    <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings</a></li>
 
-                    <li role="presentation"><a href="#messages" aria-controls="messages" role="tab" data-toggle="tab">Messages</a></li>
+                    
+                  <li role="presentation"><a href="#abouttab" aria-controls="abouttab" role="tab" data-toggle="tab">About</a></li>
+
 
                    
                  </ul>
@@ -428,9 +510,9 @@ $(function(){
                                                     <table class="table table-striped">
                                                         <thead>
                                                            <tr>
-                                                            <th>Name(Click to Update)</th>
+                                                            <th>Name (Click to Add and Update Subcategories)</th>
 
-                                                            <th><span pull-right">Subcategories (Click to Update)</span></th>
+                                                            <th><span pull-right">Subcategories (Click to Update Contents)</span></th>
                                                            </tr>
                                                         </thead>
                                
@@ -466,7 +548,7 @@ $(function(){
 
                     <!--Content pane -->
                    <div role="tabpanel" class="tab-pane" id="content">
-                   <div style="border-top: 5px dashed black"></div>
+                          <div style="border-top: 5px dashed black"></div>
 
                               <div class="row">  
 
@@ -564,11 +646,15 @@ $(function(){
 
                                  
                             </div>
-                          
-                         
-                     
-                   
+                            <!--End of content management-->
 
+
+
+
+
+                                    <!--About page content-->
+
+                   
                    </div>
                    <!-- ENd of content pane -->
                     
@@ -1231,6 +1317,7 @@ $(function(){
 
                    <!--Messages to admin -->
                        <div role="tabpanel" class="tab-pane" id="messages">
+                       <div style="border-top: 5px dashed black"></div>
 
                         <div class="panel panel-primary">
                              <div class="panel-heading"><h2>All Messages</h2></div>
@@ -1253,8 +1340,8 @@ $(function(){
                                           $flag=true;
 
                                               
-                                              $breaks = array("<br />","<br>","<br/>");  
-                                              $text = str_ireplace($breaks, "\r\n", $message['message']); 
+                                                 
+                                              $text = br2nl($message['message']); 
 
                                           printf('
 
@@ -1264,7 +1351,11 @@ $(function(){
                                                          <h2>%s</h2>
                                                         <p>%s</p>
                                                    </div>
-                                                   <div class="panel-body">%s</div>
+                                                   <div class="panel-body">
+                                                     <p>
+                                                        %s
+                                                     </p>
+                                                     </div>
 
                                                    <div class="panel-footer">
 
@@ -1290,6 +1381,272 @@ $(function(){
 
                         </div>
                         <!--End of messages -->
+
+                         <div role="tabpanel" class="tab-pane" id="abouttab">
+                         <div style="border-top: 5px dashed black"></div>
+                            <section> <!--About managerment started -->
+                       <div class="panel panel-primary">
+
+
+                     <div class="panel-heading ">
+                      <span><h2>About management</h2></span> 
+                     </div>
+
+
+                     <div class="panel-body">
+
+
+                          <ul class="nav nav-tabs">
+                             <li class="active"><a data-toggle="tab" href="#abouthome">About</a></li>
+                             <li><a data-toggle="tab" href="#addcontactinfo">Contact Info</a></li>
+                             <li><a data-toggle="tab" href="#feature">Feature</a></li>
+                             
+                           </ul>
+
+                       <div class="tab-content">
+
+                            <div id="abouthome" class="tab-pane fade-in active">
+                              
+                                 <div class="panel panel-info">
+
+                                        <div class="panel-heading">
+                                          <h2>About</h2>
+                                        </div>
+                                        <div class="panel-body">
+                                           <div class="row">
+                                            <!--Add admin column -->
+                                                <div class="col-md-9">
+                                               
+                                               <!--Add admin --> 
+                                                  <div class="panel panel-info">
+                                                      <div class="panel-heading"><h3>Add About Swotta</h3></div>
+                                                      <div class="panel-body">
+                                                        <form id="aboutswotta_id" action="addAbout.php" method="post">
+                                                            <label for="name">About Swotta</label>
+                                                            <textarea class="form-control" type="text" name="aboutswotta" placeholder="About Swotta" rows="8" required></textarea>
+
+                                                            <button type="submit"  class="form-control btn btn-primary" name="aboutswotta_add">Add</button>
+
+                                                        </form>
+                                                      </div>
+                                                  </div>
+                                               <!-- End Add admin -->
+
+                                                </div>
+                                                <div class="col-md-3">
+                                                  
+                                                </div>
+                                           </div>
+                              
+                                          </div>
+                                   </div>
+
+                                     
+                                     
+
+                                    
+                                      <!--About content start-->
+                                         <div class="panel panel-primary">
+
+                                            <div class="panel-heading">
+                                                <h2>About Swotta </h2>
+                                            </div>
+
+                                            <div class="panel-body">
+
+                                                <table class="table table-striped">
+                                                   <thead>
+                                                     <tr>
+                                                        <th>Content</th>
+                                                        <th>Options</th>
+                                                     </tr>
+                                                   </thead>
+
+                                                   <tbody id="aboutcontentbody">
+
+                                                  <?php 
+                                                  getAboutContents();
+                                                  ?>
+                                          </tbody>
+                                      </table>
+                                  </div>
+                              </div> 
+
+                                      <!--ENd of about content -->
+                                     
+         
+                                 </div> <!-- Home pane end -->
+
+                               
+
+
+                            <div id="addcontactinfo" class="tab-pane fade">
+                             
+                                 <div class="panel panel-info">
+
+                                        <div class="panel-heading">
+                                          <h2>Contact info</h2>
+                                        </div>
+                                        <div class="panel-body">
+                                           <div class="row">
+                                            <!--Add admin column -->
+                                                <div class="col-md-9">
+
+                                               <!--Add admin --> 
+                                                  <div class="panel panel-info">
+                                                    <div class="panel-heading"><h3>Add Contact Info</h3></div>
+                                                    <div class="panel-body">
+                                                      <form id="contact_info_id" action="addAbout.php" method="post">
+                                                          <label for="name">Address</label>
+                                                          <input class="form-control" type="text" name="address" placeholder="Address" required>
+
+                                                          <label for="name">Email</label>
+                                                          <input class="form-control" type="email" name="email" placeholder="Email" required>
+
+                                                          <label for="name">Mobile</label>
+                                                          <input class="form-control" type="text" name="mobile" placeholder="Mobile" required>
+
+                                                          <button type="submit"  class="form-control btn btn-primary" name="addcontactinfo">Add</button>
+
+                                                      </form>
+                                                    </div>
+                                                  </div>
+                                               <!-- End Add admin -->
+
+                                                </div>
+                                                <div class="col-md-3"></div>
+                                           </div>
+                              
+                                          </div>
+                                   </div>
+                                   <div class="panel panel-primary">
+                                     
+                                    <div class="panel-heading">
+                                                  <span>  <h2>Contact into</h2></span>
+                                                   
+                                                
+                                            
+                                                </div>
+                                   <div class="container">
+                                    
+                                          
+                                     <table class="table">
+                                       
+                                       <?php 
+                                        $result=getContactsInfo();
+                                        if(mysqli_num_rows($result)>0)
+                                        {
+                                          printf('<thead>
+                                         <tr>
+                                           <th>Email</th>
+                                           <th>Mobile</th>
+                                           <th>Address</th>
+                                         </tr>
+                                       </thead>
+                                       <tbody>');
+                                          while($row=mysqli_fetch_assoc($result))
+                                            {
+                                              printf('<tr>
+                                           <td>%s</td>
+                                           <td>%s</td>
+                                           <td>%s</td>
+                                         </tr>',$row['email'],$row['mobile'],$row['address']);
+                                            }
+                                        }
+                                        else
+                                          printf('<h3>Currently no contacts info are available</h3>');
+                                         
+                                         ?>
+                                       </tbody>
+                                     </table>
+                                   </div>
+                                   </div>
+                            </div>
+
+                         <div id="feature" class="tab-pane fade">
+                          
+                              <div class="panel panel-info">
+
+                                     <div class="panel-heading">
+                                       <h2>Features</h2>
+                                     </div>
+                                     <div class="panel-body">
+                                        <div class="row">
+                                         <!--Add admin column -->
+                                             <div class="col-md-9">
+
+                                            <!--Add admin --> 
+                                               <div class="panel panel-info">
+                                                 <div class="panel-heading"><h3>Add Feature</h3></div>
+                                                 <div class="panel-body">
+                                                   <form id="feature_id" action="addAbout.php" method="post">
+                                                       <label for="name">Title</label>
+                                                       <input class="form-control" type="text" name="title" placeholder="Tilte " required>
+
+                                                       <label for="name">Body</label>
+                                                       <textarea class="form-control" type="text" name="body" placeholder="Body of the feature" rows="8" required></textarea>
+
+                                                       <button type="submit"  class="form-control btn btn-primary" name="addfeature" >Add</button>
+
+                                                   </form>
+                                                 </div>
+                                               </div>
+                                            <!-- End Add admin -->
+
+                                             </div>
+                                             <div class="col-md-3"></div>
+                                        </div>
+                           
+                                       </div>
+                                </div>
+
+
+                                <div class="panel panel-primary">
+                                                <div class="panel-heading">
+                                                  <span> <h2>All Feature </h2></span>
+                                                   
+                                                
+                                            
+                                                </div>
+
+                                                <div class="panel-body" id="pBody">
+                                              <table class="table-striped table">
+                                               <thead>
+                                                    <tr>
+                                                    <th><h2>Title</h2></th>
+                                                    <th><h2>Body </h2></th>
+                                                    <th><h2 class="pull-right">Options</h2></th>
+                                                  </tr>
+                                                </thead>
+                                                               
+
+                                                    <tbody id="featuresid">
+
+                                                  <?php 
+                                                    getFeatureBody();
+                                                   ?>
+                                                    </tbody>
+
+                                                         
+                                                    </table>
+
+
+                                                                
+                                                  </div>
+
+                                             </div>
+                         </div>
+                         
+                   </div>
+
+                   </div>
+                   </div>
+            </section>
+                            
+                    
+
+                            <!--End About page content-->
+                         </div>
 
                         
 
@@ -1326,4 +1683,3 @@ $('.bxslider').bxSlider({
 
 
 
- 

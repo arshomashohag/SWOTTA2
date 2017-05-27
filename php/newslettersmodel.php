@@ -38,4 +38,7 @@ function getNewsCategory($userid){
 }
 
 
+ 
+
+
 ?>

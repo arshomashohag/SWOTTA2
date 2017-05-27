@@ -1,7 +1,7 @@
 <?php
 include_once('dbConnection.php');
 
-function getSlider(){
+function getIndexSlider(){
 
 	global $connection;
 

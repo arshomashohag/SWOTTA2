@@ -10,6 +10,10 @@
 
       $advertisement = getAdvertisement();
       $numAdd = count($advertisement);
+
+      function br2nl( $input ) {
+    return preg_replace('/<br\s?\/?>/ius', "\n", str_replace("\n","",str_replace("\r","", htmlspecialchars_decode($input))));
+}
       
 
  ?>
@@ -27,6 +31,9 @@
 <link rel="stylesheet" type="text/css" href="assets/css/style.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="assets/css/responsive.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="assets/css/jquery.bxslider.css" media="screen" />
+<link rel="stylesheet" type="text/css" href="assets/css/about.css"/>
+<link rel="shortcut icon" type="image/png" href="images/icon/favicon.png"/>
+
 
 
 </head>
@@ -34,7 +41,7 @@
 <div class="body_wrapper">
   <div class="center">
     <div class="header_area">
-      <div class="logo floatleft"><a href="#"><img src="images/logo12.png" alt="" /></a></div>
+      <div class="logo floatleft"><a href="index.php"><img src="images/logo12.png" alt="" /></a></div>
        <br>
        <br>
        <br>
@@ -42,7 +49,7 @@
       <span class="top_menu">
         <ul>
           <li><a href="index.php">Home</a></li>
-          <li><a href="aboutUs.php">About</a></li>
+          <li><a href="about.php">About</a></li>
           <li><a href="contact.php">Contact us</a></li>
           <li><a href="newsletters.php">Subscribe</a></li>
          <?php 
@@ -77,13 +84,7 @@
             <li><a href="#" class="feed"></a></li>
           </ul>
         </div>
-        <div class="search">
-          <form action="#" method="post" id="search_form">
-            <input type="text" value="Search news" id="s" />
-            <input type="submit" id="searchform" value="search" />
-            <input type="hidden" value="post" name="post_type" />
-          </form>
-        </div>
+        
       </div>
     </div>
 
@@ -112,24 +113,180 @@
     </div>
 <!--End of menu area-->
 
+
+
+
+
 <!-- body of about is started-->
 
-<section>
+<section class="uppersection" >
 
-<h1 class="text-center">ABOUT SWOTTA</h1>  
-  <div>
-  <h2>Making sense of the SWOTTA </h2>
-  <p>EUobserver is a not-for-profit, independent online newspaper established in Brussels in 2000. We value free thinking and plain speech and aim to support European democracy by giving people the information they need to hold the EU establishment to account.</p>
+
+    <div class="container">
+        <div class="row">
+
+             <div class="upperdiv">
+               <center>
+                  <h2 id="abouthead">ABOUT SWOTTA<h2>
+               </center>
+             
+               
+               <p>
+
+               <?php
+                    $about = getAbout();
+                    $about = mysqli_fetch_assoc($about);
+
+                    printf("%s", br2nl($about['about']));
+
+               ?>
+
+               </p>
+
+             </div>
+
+        </div>
+
+
+    </div>
+
+ 
+</section>
+
+
+<section class="middlesection">
+  <div class="container">
+
+        <center>
+              <h2 id="featurehead">Feautures</h2>
+        </center>
+
+
+
+        <?php
+
+           $features = getFeatures();
+
+           $i=0;
+
+           while( ($feature=mysqli_fetch_assoc($features)) && $i<6 ){
+
+                if($i%3===0){
+
+                  if($i!=0){
+                      printf("</div>");
+                  }
+                  printf("<div class='row'>");
+
+                }
+
+                printf('
+
+                      <div class="col-md-4">
+                        <p class="col-head">
+                          <span class="bold toUpper">
+                            %s
+                          </span>
+
+                        </p> 
+                          <p>%s</p>
+                        
+                      </div>
+                  ', $feature['title'], $feature['body']);
+
+                $i++;
+
+           }
+
+           if($i%3){
+             printf('</div>');
+           }
+
+
+        ?>
+
+       
   </div>
+</section>
 
-  <div>
-    <h2>High quality journalism</h2>
-    <p>Our team of experienced journalists file daily news reports from the EU capital and beyond and do in-depth investigations on topics of special interest. If you want EUobserver to look into a specific issue, please contact our editors. We protect our sources.</p>
+
+<section class="footersection">
+  <div class="container" id="footercontainer">
+      <div class="row">
+          <!--Address-->
+            <div class="col-md-4"></div>
+
+              <div class="col-md-4">
+
+                                      <?php
+
+                                      $r = getContactsInfo();
+                                      $address = mysqli_fetch_assoc($r);
+
+
+                                      ?>
+                             
+
+                                         <h2 id="contacthead">Contact Info</h2>
+
+                                          <div class="row">
+                             
+                                            <div class="col-md-2">
+                                                 <i class="fa fa-map-marker fa-fw fa-2x"></i>
+                                             </div>
+                                             <div class="col-md-10">
+                                               <p><?php echo $address['address']; ?></p>
+                                             </div>
+
+                                          </div>
+
+                                           <div class="row">
+
+                                            <div class="col-md-2">
+                                                 <i class="fa fa-envelope-o fa-fw fa-2x"></i>
+                                             </div>
+                                             <div class="col-md-10">
+                                                <p><?php echo $address['email'];?></p>
+                                             </div>
+
+                                          </div>
+
+
+                                          <div class="row">
+
+                                            <div class="col-md-2">
+                                                 <i class="fa fa-phone fa-fw  fa-2x"></i>
+                                             </div>
+                                             <div class="col-md-10">
+                                                <p><?php echo $address['mobile'];?></p>
+                                             </div>
+
+                                          </div>
+
+
+
+                                
+
+                     
+              </div>
+
+              <div class="col-md-4"></div>
+
+            
+          
+          <!--End address-->
+
+           
+
+      </div>
   </div>
 </section>
 
 
 <!-- body about is ended-->
+
+
+
 
 
 
@@ -171,7 +328,10 @@
 <script type="text/javascript" src="assets/js/jquery-min.js"></script> 
 <script type="text/javascript" src="assets/js/bootstrap.min.js"></script> 
 <script type="text/javascript" src="assets/js/jquery.bxslider.js"></script> 
-<script type="text/javascript" src="assets/js/selectnav.min.js"></script> 
+<script type="text/javascript" src="assets/js/selectnav.min.js"></script>
+<script src="https://use.fontawesome.com/b3e68927bc.js"></script>
+
+
 <script type="text/javascript">
 selectnav('nav', {
     label: '-Navigation-',
@@ -190,3 +350,5 @@ $('.bxslider').bxSlider({
 </script>
 </body>
 </html>
+
+

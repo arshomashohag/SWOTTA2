@@ -386,6 +386,60 @@ function getGallery(){
 
     }
 
+    function getFeatureBody(){
+
+          $result=getFeatures();
+                               if(isset($result)){
+                                    while ($row=mysqli_fetch_assoc($result)) {
+
+                                         $breaks = array("<br />","<br>","<br/>");  
+                                            $about = str_ireplace($breaks, "\r\n", $row['body']);
+
+                                     printf("<tr>");
+                                      printf('<td>%s</td>
+                                              <td>%s</td>'
+
+
+                                         ,$row['title'],$about);
+
+                                       
+
+                                      printf('<td>
+                                                              <span class="pull-right">
+                                        <a type="button" class ="btn btn-primary" target="_blank" href="featureDetails.php?id=%s">Edit </a>
+                                          <button class="btn btn-xs btn-danger" type="button" data-toggle="modal" data-target="#%sconfirmDeleteF" data-title="Delete User" data-message="Are you sure you want to delete this contents ?">Delete </button>
+                                       </span>
+                                        </td>
+
+                                        </tr>
+
+                                        <div class="modal fade" id="%sconfirmDeleteF" role="dialog" aria-labelledby="confirmDeleteLabel" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                              <div class="modal-content">
+                                                <div class="modal-header">
+                                                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                                  <h4 class="modal-title">Delete Parmanently</h4>
+                                                </div>
+                                                <div class="modal-body">
+                                                  <p>Are you sure about this ?</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                                    
+                                                    <button type="button" data-dismiss="modal" class="btn btn-danger" id="confirm"  onclick=deleteFeature(\'%s\')>Delete</button>
+                                                 </div>
+                                              </div>
+                                            </div>
+                                          </div>
+
+                                        ',$row['id'], $row['id'],$row['id'], $row['id']);
+                                     //print("</tr>");
+                                  }
+
+                       } 
+
+    }
+
 
 
 

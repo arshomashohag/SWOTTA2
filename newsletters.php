@@ -1,11 +1,15 @@
 <?php
+      if (session_status() == PHP_SESSION_NONE) {
+           
+         session_start();
+      }
+
        include_once('php/allFunctions.php');
        include_once('php/indexModel.php');
        include_once('php/newslettersmodel.php');
+       include_once('php/Rss.php');
 
 
-        ob_start();
-        session_start();
            
       
       $catresult = getCategory();
@@ -49,6 +53,8 @@
 <link rel="stylesheet" type="text/css" href="assets/css/newsletters.css">
 <link rel="stylesheet" type="text/css" href="assets/css/newsdetails.css">
 <link rel="stylesheet" type="text/css" href="assets/css/contact.css">
+<link rel="shortcut icon" type="image/png" href="images/icon/favicon.png"/>
+
 
 <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 
@@ -99,7 +105,7 @@ var status = $(ths).prop('checked');
 <div class="body_wrapper">
   <div class="center">
     <div class="header_area">
-      <div class="logo floatleft"><a href="#"><img src="images/logo12.png" alt="" /></a></div>
+      <div class="logo floatleft"><a href="index.php"><img src="images/logo12.png" alt="" /></a></div>
        <br>
        <br>
        <br>
@@ -107,7 +113,7 @@ var status = $(ths).prop('checked');
       <span class="top_menu">
         <ul>
           <li><a href="index.php">Home</a></li>
-          <li><a href="#">About</a></li>
+          <li><a href="about.php">About</a></li>
           <li><a href="contact.php">Contact us</a></li>
           <li><a href="newsletters.php">Subscribe</a></li>
          <?php 
@@ -161,6 +167,8 @@ var status = $(ths).prop('checked');
           }
 
           else{
+
+            $userid = $_SESSION['id'];
             ?>
 
             <div class="panel panel-info">
@@ -179,6 +187,8 @@ var status = $(ths).prop('checked');
                        <ul class="nav nav-tabs nav-justified" role="tablist">
                          <li role="presentation" class="active"><a href="#news" aria-controls="home" role="tab" data-toggle="tab">Newsletters</a></li>
                          <li role="presentation" ><a href="#subscription" aria-controls="profile" role="tab" data-toggle="tab">Subscription</a></li>
+                         
+ 
 
                          <li role="presentation"><a href="#settings" aria-controls="settings" role="tab" data-toggle="tab">Settings</a></li>
 
@@ -355,7 +365,35 @@ var status = $(ths).prop('checked');
                               
                             </div>
                             <!-- End Subscription -->
+                              
+                            <!-- 
 
+                             <div role="tabpanel" class="tab-pane fade-in" id="rssfeed">
+                                 <div class="panel panel-primary">
+                                    <div class="panel-heading">
+                                       <h2>Rss Feed</h2>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                               
+                                            </div>
+
+                                            <div class="col-md-6" id="rsslinks">
+                                               <cneter> <h3> RSS Links </h3></cneter>
+                                               <?php 
+
+                                                  getRss($userid);
+
+                                               ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                   
+                                 </div>
+                             </div>
+
+                             -->
 
 
                             <!-- User Settings -->

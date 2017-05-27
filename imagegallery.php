@@ -31,6 +31,8 @@ $catresult = getCategory();
 <link rel="stylesheet" type="text/css" href="assets/css/responsive.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="assets/css/jquery.bxslider.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="assets/css/contact.css">
+<link rel="shortcut icon" type="image/png" href="images/icon/favicon.png"/>
+
 </head>
 
 <body>
@@ -39,7 +41,7 @@ $catresult = getCategory();
   <div class="center">
 
     <div class="header_area">
-      <div class="logo floatleft"><a href="#"><img src="images/logo12.png" alt="" /></a></div>
+      <div class="logo floatleft"><a href="index.php"><img src="images/logo12.png" alt="" /></a></div>
       <br>
       <br>
       <br>
@@ -47,7 +49,7 @@ $catresult = getCategory();
       <span class="top_menu">
         <ul>
           <li><a href="index.php">Home</a></li>
-          <li><a href="#">About</a></li>
+          <li><a href="about.php">About</a></li>
           <li><a href="contact.php">Contact us</a></li>
           <li><a href="newsletters.php">Subscribe</a></li>
             <?php 

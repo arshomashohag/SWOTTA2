@@ -1,6 +1,7 @@
 <?php
 include_once('php/allFunctions.php');
 include_once('php/indexModel.php');
+include_once('php/commentsModel.php');
 
  if (session_status() == PHP_SESSION_NONE) {
     session_start();
@@ -74,7 +75,70 @@ function get_snippet( $str, $wordCount=50) {
 <link rel="stylesheet" type="text/css" href="assets/css/responsive.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="assets/css/jquery.bxslider.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="assets/css/contact.css">
+<link rel="shortcut icon" type="image/png" href="images/icon/favicon.png"/>
 
+
+
+<script type="text/javascript">
+  function addComment(pid){
+    var comment = document.getElementById("commenttext").value;
+
+     var xmlhttp;
+       
+       
+          if (window.XMLHttpRequest){
+
+                                  xmlhttp = new XMLHttpRequest();
+
+                                  }
+
+                                   else{ 
+                                     xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+                                  }
+
+                               xmlhttp.onreadystatechange = function(){
+                                 
+                                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                                        document.getElementById("commentsdiv").innerHTML = xmlhttp.responseText;
+                                    }
+
+                               }
+
+                              xmlhttp.open("GET", "php/commentsModel.php?pid="+pid+"&comment="+comment+"&extra="+true, true);
+                              xmlhttp.send();
+                            
+                    return;  
+  }
+
+
+  function deleteComment(id, pid){
+     var xmlhttp;
+       
+       
+          if (window.XMLHttpRequest){
+
+                                  xmlhttp = new XMLHttpRequest();
+
+                                  }
+
+                                   else{ 
+                                     xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+                                  }
+
+                               xmlhttp.onreadystatechange = function(){
+                                 
+                                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                                        document.getElementById("commentsdiv").innerHTML = xmlhttp.responseText;
+                                    }
+
+                               }
+
+                              xmlhttp.open("GET", "php/commentsModel.php?id="+id+"&pid="+pid+"&delete="+true+"&extra="+true, true);
+                              xmlhttp.send();
+                            
+                    return;  
+ }
+</script>
 
 </head>
 
@@ -84,7 +148,7 @@ function get_snippet( $str, $wordCount=50) {
   <div class="center">
 
     <div class="header_area">
-      <div class="logo floatleft"><a href="#"><img src="images/logo12.png" alt="" /></a></div>
+      <div class="logo floatleft"><a href="index.php"><img src="images/logo12.png" alt="" /></a></div>
       <br>
       <br>
       <br>
@@ -92,7 +156,7 @@ function get_snippet( $str, $wordCount=50) {
       <span class="top_menu">
         <ul>
           <li><a href="index.php">Home</a></li>
-          <li><a href="#">About</a></li>
+          <li><a href="about.php">About</a></li>
           <li><a href="contact.php">Contact us</a></li>
           <li><a href="newsletters.php">Subscribe</a></li>
             <?php 
@@ -168,7 +232,11 @@ function get_snippet( $str, $wordCount=50) {
 
  
 					      	     if(isset($cid)){
-                        $result = getAllContents($cid);
+                        if($cid==10000)
+                          $result = getPopular();
+
+                        else
+                          $result = getAllContents($cid);
 
 
                          while($news=mysqli_fetch_assoc($result)){
@@ -242,21 +310,23 @@ function get_snippet( $str, $wordCount=50) {
                                    $flag=true;
 
 
-                                   printf('
-
-                                    <div class="row">
-
-                                         
-                                        <div class="col col-md-11">');
+                                   
 
                                            /*if(!empty($news['image'])){
                                                     printf('<img src="%s" >', $news['image']);
                                                  }*/
 
                                                  if(!isset($pid)){
-                                                 printf('
+                                                  printf('
+
+                                                      <div class="row">');
+
+                                                 printf(' 
+
+                                                      
+                                                     <div class="col col-md-11">
                                                   
-                                                  <div class="panel panel-default">
+                                                     <div class="panel panel-default">
                                                        <div class="panel-heading">
                                                             <h3 class="text-capitalize">%s</h3>
                                                             <p class="created">at %s</p>
@@ -276,8 +346,29 @@ function get_snippet( $str, $wordCount=50) {
                                                             </span>
                                                       </div>
                                                 </div>', $news['head'], $news['createdat'], get_snippet($news['body']), $name, $news['id']);
+
+
+
+
+
+                                                 printf(' </div>
+                                                  <div class="col-md-1">
+                                                  </div>
+                                                  </div>');
+                                                 
+                                                 
+
                                                }
+
+
+
                                                else{
+                                                  printf('<div class="row">');
+
+                                                  printf('<div class="col col-md-1"></div>
+
+                                                    <div class="col col-md-10">');
+
                                                 if(!empty($news['image'])){
                                                     printf('<img src="%s" >', $news['image']);
                                                  }
@@ -293,14 +384,36 @@ function get_snippet( $str, $wordCount=50) {
 
                                                 ', $news['head'], $news['createdat'],$news['body'], $name, $news['id']);
 
+
+                                               printf(' </div>
+                                                <div class="col col-md-1">
+                                                </div>
+                                                </div>');
+
+                                               printf('
+                                                   <br><br>
+                                                  <div class="row">
+                                                      <div class="col col-md-1"></div>
+                                                      
+
+                                                      <div class="col col-md-10" id="commentsdiv">');
+
+                                                           echo getComments($pid, true);
+
+                                                      printf('<div>
+
+
+                                                      <div class="col-md-1"></div>
+                                                  </div>
+
+
+
+                                                  ');
+
                                                }
 
 
 
-                                       printf(' </div>
-                                        <div class="col col-md-1">
-                                        </div>
-                                        </div>');
                                    
                                      
 

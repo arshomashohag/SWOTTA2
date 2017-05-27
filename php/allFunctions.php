@@ -1,5 +1,5 @@
 <?php 
-include "php/dbConnection.php";
+include "dbConnection.php";
 	
 	function signin_checking($email, $password){
 
@@ -55,15 +55,12 @@ include "php/dbConnection.php";
 
 
 
-	function registration()
+	function registration($name, $email, $password, $confirm_password)
 	{
 		// Signup form action is here
     global $connection;
         $error=false;
-        $email = $_POST['email'];
-        $password = $_POST['password'];
-        $confirm_password = $_POST['confirm_password'];
-
+        
         
         $email = mysqli_real_escape_string($connection,$email);
         $password = mysqli_real_escape_string($connection,$password);
@@ -111,14 +108,14 @@ include "php/dbConnection.php";
                         $salt = "iusesomecrazystrings22";
                         $hashF_and_salt = $hashFormat . $salt;
                         $password = crypt($password, $hashF_and_salt);
-                        $query="INSERT INTO users(email,password)";
-                        $query.="values('$email','$password')";
+                        $query="INSERT INTO users(name, email, password)";
+                        $query.="values('$name','$email','$password')";
                         $query_insert_result = mysqli_query($connection,$query);
+
                         if($query_insert_result)
                         {
-                             
-                            $_SESSION['email'] = $email;                            
-                            header("Location:index.php");
+
+                            return "You Are Successfully Registered !! Please Log In Now.";
                         }
                         else
                         {
@@ -184,6 +181,8 @@ include "php/dbConnection.php";
       }
       return "Something went wrong, please try again !";
     }
+
+    return "Wrong old password !!";
   }
 
 
@@ -350,6 +349,34 @@ function updateArticle($id, $title, $filepath, $filetmp, $article,$tableName)
 
   }
 
+  function getAllContentsBySearch($text){
+    $array = preg_split("/[\s,]+/", $text);
+
+    global $connection;
+    $query ="SELECT * FROM content WHERE ";
+
+
+    $chk = 1;
+    foreach ($array as $value) {
+
+      if($chk>1){
+       $query.='OR body LIKE \'%'.$value.'%\' ';
+      }
+
+      else{
+        $query.= 'body LIKE \'%'.$value.'%\' ';
+      }
+
+     $query.='OR head LIKE \'%'.$value.'%\' ';
+
+      $chk++;
+
+    }
+   //return $query;
+    return mysqli_query($connection, $query);
+     
+  }
+
 
   function getAllcontentsDetails($id){
     global $connection;
@@ -460,7 +487,9 @@ function addNewEditorial($title, $editorial,  $filepath, $filetmp){
 function addDeskNews($title, $editorial,  $filepath, $filetmp){
     global $connection;
 
-  $query = "INSERT INTO desk (head, body, image) VALUES('$title','$editorial','$filepath')";
+    $time = date("Y-m-d H:i:s");
+
+  $query = "INSERT INTO desk (head, body, image, createdat) VALUES('$title','$editorial','$filepath', '$time')";
 
   $result = mysqli_query($connection, $query);
 
@@ -750,6 +779,126 @@ function getAllMessages(){
 
   return mysqli_query($connection, $query);
 }
+
+
+
+function getAbout($id=null)
+{
+  global $connection;
+  if(isset($id)){
+      $check = "SELECT * FROM abouts WHERE id='$id'";
+    }
+
+  else{
+   $check="SELECT * FROM abouts ORDER BY createdat DESC";
+ }
+    return mysqli_query($connection,$check);
+     
+}
+
+function updateAbout($id, $about){
+  global $connection;
+
+  $query = "UPDATE abouts SET about='$about' WHERE id='$id' ";
+  mysqli_query($connection, $query);
+
+  return mysqli_affected_rows($connection);
+}
+
+function deleteAboutContent($id){
+  global $connection;
+
+  $query = "DELETE FROM abouts  WHERE id='$id' ";
+  mysqli_query($connection, $query);
+
+  return mysqli_affected_rows($connection);
+}
+
+ function add_about_swotta($about)
+ {
+         global $connection;        
+         $query="INSERT INTO abouts (about) values('$about')";
+
+         $result=mysqli_query($connection,$query);       
+         return $result;
+ }
+
+ function getContactsInfo()
+{
+  global $connection;
+   $query="SELECT * FROM contactinfos";
+   $result = mysqli_query($connection,$query);
+   return $result;
+}
+
+function getFeatures()
+{
+  global $connection;
+   $query="SELECT * FROM about_feature ORDER BY createdat DESC";
+   $result = mysqli_query($connection,$query);
+   return $result;
+}
+
+ function add_contact_info($address, $email , $mobile)
+ {
+
+   global $connection;
+   $check="SELECT * FROM contactinfos ";
+   $check_result = mysqli_query($connection,$check);
+   $row=mysqli_fetch_assoc($check_result);
+   $a=$row['address'];
+   $b=$row['email'];
+   $c=$row['mobile'];
+   $address=mysqli_real_escape_string($connection,$address);
+   $email=mysqli_real_escape_string($connection,$email); 
+   $mobile=mysqli_real_escape_string($connection,$mobile);
+   
+   if(empty($a) && empty($b) && empty($c))
+      {
+         
+         $query="INSERT INTO contactinfos (address,email,mobile) values('$address','$email','$mobile')";
+         $result=mysqli_query($connection,$query);
+        
+      }
+      else
+      {
+
+        $query="UPDATE contactinfos SET address='$address',email='$email',mobile='$mobile' where id=0";
+        $result=mysqli_query($connection,$query);
+       
+      }
+      return $result;
+ }
+
+
+function  getIndividualFeature($id){
+
+
+     global $connection;
+    $query = "SELECT * FROM about_feature WHERE id='$id'";
+
+    return mysqli_query($connection, $query);
+
+}
+
+function  updateFeature($title,$body,$id){
+     global $connection;
+        $query="UPDATE about_feature SET title='$title',body='$body' where id='$id'";
+       return $result=mysqli_query($connection,$query); 
+}
+function add_feature($title,$body)
+ {
+
+   global $connection;
+   
+   $title=mysqli_real_escape_string($connection,$title);
+   $body=mysqli_real_escape_string($connection,$body); 
+
+   $query="INSERT INTO about_feature (title,body) values('$title','$body')";
+   $result=mysqli_query($connection,$query);
+     
+      return $result;
+ }
 
  
 

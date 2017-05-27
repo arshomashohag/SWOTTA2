@@ -79,6 +79,9 @@ if(isset($_GET['aid']) && isset($_GET['name'])){
 
 }
 
+function br2nl( $input ) {
+    return preg_replace('/<br\s?\/?>/ius', "\n", str_replace("\n","",str_replace("\r","", htmlspecialchars_decode($input))));
+}
 
 
  
@@ -104,6 +107,8 @@ if(isset($_GET['aid']) && isset($_GET['name'])){
 <link rel="stylesheet" type="text/css" href="assets/css/myStyle.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="assets/css/responsive.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="assets/css/jquery.bxslider.css" media="screen" />
+<link rel="shortcut icon" type="image/png" href="images/icon/favicon.png"/>
+
 
 
 
@@ -245,7 +250,7 @@ if(isset($_GET['aid']) && isset($_GET['name'])){
                                         <div class="form-group">
                                               <label for="inputEmail3" class="col-sm-3 control-label">Article</label>
                                               <div class="col-sm-9">
-                                                <textarea  name="article" type="text" class="form-control" id="inputtext"  rows="8" required><?php $breaks = array("<br />","<br>","<br/>");$body = str_ireplace($breaks, "\n", $body); echo $body;?></textarea>
+                                                <textarea  name="article" type="text" class="form-control" id="inputtext"  rows="8" required><?php  echo br2nl($body);?></textarea>
                                               </div>
                                         </div>
                                          <div class="form-group">

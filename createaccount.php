@@ -9,15 +9,25 @@
 
         $islogedin = false;
 
-        if(isset($_POST['signup'])){
-        $msg = registration();
-      }  
-
-        else if(isset($_SESSION['email'])){
-          $islogedin = true;
+         if(isset($_SESSION['email'])){
+            $islogedin = true;
             header("Location: index.php");
         }
+       
+       $msg=null;
 
+        if(isset($_POST['signup'])){
+
+          $name = $_POST['name'];
+          $email = $_POST['email'];
+          $password = $_POST['password'];
+          $confirm_password = $_POST['confirm_password'];
+         
+          $msg = registration($name, $email, $password, $confirm_password);
+
+      }  
+
+       
       
 
 
@@ -38,12 +48,14 @@
 <link rel="stylesheet" type="text/css" href="assets/css/responsive.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="assets/css/jquery.bxslider.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="assets/css/contact.css">
+<link rel="shortcut icon" type="image/png" href="images/icon/favicon.png"/>
+
 </head>
 <body>
 <div class="body_wrapper">
   <div class="center">
     <div class="header_area">
-      <div class="logo floatleft"><a href="#"><img src="images/logo12.png" alt="" /></a></div>
+      <div class="logo floatleft"><a href="index.php"><img src="images/logo12.png" alt="" /></a></div>
       <br />
       <br />
       <br />
@@ -51,7 +63,7 @@
       <span class="top_menu">
         <ul>
           <li><a href="index.php">Home</a></li>
-          <li><a href="#">About</a></li>
+          <li><a href="about.php">About</a></li>
           <li><a href="contact.php">Contact us</a></li>
           <li><a href="newsletters.php">Subscribe</a></li>
           <li><a href="login.php">Login</a></li>
@@ -92,7 +104,7 @@
 
                                         ?>
                                         <div class="form-group">
-                                            <div class="alert alert-danger">
+                                            <div class="alert alert-info">
                                                 <span class="glyphicon glyphicon-info-sign"></span> <?php echo $msg; ?>
                                             </div>
                                         </div>
@@ -100,7 +112,8 @@
                                     }
                                     ?>
                                     <form class="form-signin" action="<?php echo $_SERVER['PHP_SELF']?>" method="post">
-                                        
+                                      <input type="text" class="form-control fc" name="name" placeholder="Name" required autofocus>
+
                                       <input type="email" class="form-control fc" name="email" placeholder="Email" required autofocus>
                                       <input type="password" class="form-control  fc" name="password" placeholder="Password" required>
 

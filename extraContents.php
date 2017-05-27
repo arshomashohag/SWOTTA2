@@ -73,6 +73,7 @@ if(isset($_POST['addadmn'])){
 <link rel="stylesheet" type="text/css" href="assets/css/myStyle.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="assets/css/responsive.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="assets/css/jquery.bxslider.css" media="screen" />
+<link rel="shortcut icon" type="image/png" href="images/icon/favicon.png"/>
 
 
 

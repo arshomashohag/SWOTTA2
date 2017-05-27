@@ -1,9 +1,11 @@
 <?php
+      if (session_status() == PHP_SESSION_NONE) {
+          session_start();
+      }
        include_once('php/allFunctions.php');
        include_once('php/indexModel.php');
 
-        ob_start();
-        session_start();
+         
            
       
      $catresult = getCategory();
@@ -46,8 +48,25 @@
 <link rel="stylesheet" type="text/css" href="assets/css/style.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="assets/css/responsive.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="assets/css/jquery.bxslider.css" media="screen" />
- 
+<link rel="shortcut icon" type="image/png" href="images/icon/favicon.png"/>
 
+<script type="text/javascript">
+  
+   window.onload = displayWindowSize;
+   window.onresize = displayWindowSize;
+    
+
+    function displayWindowSize() {
+        myWidth = window.innerWidth;
+         
+        if(myWidth<500){
+          document.getElementById("testslider").innerHTML = "";
+          document.getElementById("testslider").className="mobile";
+        }
+
+  }
+  
+</script>
 
 
 </head>
@@ -65,7 +84,7 @@
       <span class="top_menu">
         <ul>
           <li><a href="index.php">Home</a></li>
-          <li><a href="#">About</a></li>
+          <li><a href="about.php">About</a></li>
           <li><a href="contact.php">Contact us</a></li>
           <li><a href="newsletters.php">Subscribe</a></li>
          <?php 
@@ -95,22 +114,21 @@
       </span>
      
 
-      <div class="social_plus_search floatright">
-        <div class="social">
-          <ul>
-            <li><a href="#" class="twitter"></a></li>
-            <li><a href="#" class="facebook"></a></li>
-            <li><a href="#" class="feed"></a></li>
-          </ul>
-        </div>
+         
+          
         <div class="search">
-          <form action="#" method="post" id="search_form">
-            <input type="text" value="Search news" id="s" />
-            <input type="submit" id="searchform" value="search" />
-            <input type="hidden" value="post" name="post_type" />
-          </form>
+  
+            <div class="form-group ">
+            <form method="post" action="searchnews.php">
+                 
+                <input type="text" placeholder="Search news" id="sbox" name="searchtext"  />
+                <input  type="submit" class="btn btn-default" id="searchform" value="search"/> 
+                 
+            </form>
+            </div>
+          
         </div>
-      </div>
+      
     </div>
 
     <!-- Start Menu Area -->
@@ -133,20 +151,22 @@
                   </li>');
              }                     
         ?>
-        
+       
+
       </ul>
     </div>
 
 <!--End of menu area-->
 
 
-    <div class="slider_area">
-      <div class="slider">
-        <ul class="bxslider">
+    <div class="slider_area" id="testslider">
 
-          <?php 
+       <div class="slider">
+          <ul class="bxslider">
 
-             $sliders=getSlider();
+          
+        <?php
+             $sliders=getIndexSlider();
              $i=0;
             while( ($slider=mysqli_fetch_assoc($sliders)) && $i<10) {
 
@@ -155,12 +175,14 @@
                   ', $slider['link'], $slider['description']);
                  $i++;
                
-             }  
+             }
+          ?>  
              
-          ?>
           
-        </ul>
+          </ul>
       </div>
+
+          
     </div>
 
     <!--Start of content area -->
@@ -473,9 +495,18 @@
                     <div class="news-letter">
                       <h2>Sign In </h2>
                       <form action="login.php" method="post">
-                        <input type="email" name="email" class="form-control" placeholder="Email"  id="signinemail" required />
-                        <input type="password" name="password" class="form-control" placeholder="Password" id="signinpassword"  required />
-                        <input type="submit" class="form-control" name="login" value="SUBMIT" id="form-submit" />
+                        <div class="form-group">
+                            <input type="email" name="email" class="form-control" placeholder="Email"  id="signinemail" required />
+                        </div>
+
+                            <div class="form-group">
+                              <input type="password" name="password" class="form-control" placeholder="Password" id="signinpassword"  required />
+                            </div>
+                        
+                        <div class="form-group">
+                          <input type="submit" class="form-control" name="login" value="SUBMIT" id="form-submit" />
+                        </div>
+
                       </form>
                        <p>Not have an account ?</p>
                       <p> <a href="createaccount.php" style="font-style: italic; ">Sign up</a> to receive our free newsletters!</p>
@@ -524,13 +555,72 @@
                         ?>
                          
                       </ul>
-                      <a class="popular_more" href="#">more</a> </div>
+                      <a class="popular_more" href="allnews.php?catname=Popular&cid=10000">more</a> 
+                      </div>
                   </div>
 
                   <!--End Of popular -->
 
 
-                  <!--Start of Second Add-->
+                  <!--Start of RSS-->
+
+                  <div class="single_sidebar">
+                    <div class="popular">
+                      <h2 class="title">RSS Feed</h2>
+
+                  <?php
+                    $rss = new DOMDocument();
+                    $rss->load('http://en.prothom-alo.com/feed/');
+                    $feed = array();
+
+                    foreach ($rss->getElementsByTagName('item') as $node) {
+                        $nodes = $node->childNodes;
+                        $description = null;
+
+                        foreach ($nodes as $n ) {
+
+                            if($n->nodeName == "content:encoded"){
+                              $description = $n->textContent;
+                            }
+                        }
+
+                      $item = array ( 
+                        'title' => $node->getElementsByTagName('title')->item(0)->nodeValue,
+                         'desc'=> $description,
+                        'link' => $node->getElementsByTagName('link')->item(0)->nodeValue,
+                        'date' => $node->getElementsByTagName('pubDate')->item(0)->nodeValue,
+                        );
+                      array_push($feed, $item);
+                    }
+                    $limit = 3;
+                    $count = count($feed);
+
+                    printf('<ul>');
+
+                    for($x=0;$x<$limit && $x<$count;$x++) {
+
+
+                      printf('<li style="margin:5px 0px 5px 0px">
+                        <div class="single_popular" ');
+                      $title = str_replace(' & ', ' &amp; ', $feed[$x]['title']);
+                      $link = $feed[$x]['link'];
+                      $description = $feed[$x]['desc'];
+                      $date = date('l F d, Y', strtotime($feed[$x]['date']));
+                      echo '<p><strong><a href="'.$link.'" title="'.$title.'">'.$title.'</a></strong><br />';
+                      echo '<small><em>Posted on '.$date.'</em></small></p><br>';
+                      echo '<p>'.get_snippet($description).'</p>';
+
+                      printf('</div></li>');
+                    }
+                    printf('</ul>');
+                  ?>
+                    </div>
+                  </div>
+
+                  <!--End of RSS-->
+
+
+                  <!-- 
                   <?php
                                        
                      if($numAdd>0){
@@ -538,11 +628,11 @@
                     }                  
 
                   ?>
-                  <!--End of second add -->
+                  -->
 
                    <!--Start Third add-->
                    <div class="single_sidebar">
-                      <h2 class="title">ADD</h2>
+                      <h2 class="title">AD</h2>
                       <?php
                                        
                      if($numAdd>1){
@@ -625,5 +715,8 @@ $('.bxslider').bxSlider({
     captions: true
 });
 </script>
+
+
 </body>
 </html>
+

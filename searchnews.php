@@ -1,36 +1,19 @@
 <?php
 include_once('php/allFunctions.php');
 include_once('php/indexModel.php');
-include_once('php/commentsModel.php');
+ 
+ 
+$catresult = getCategory();
 
+$searchtext="";
 
-if (session_status() == PHP_SESSION_NONE) {
-    ob_start();
-   session_start();
+if(isset($_POST['searchtext'])){
+  $searchtext = $_POST['searchtext'];
 }
-
-if(!isset($_GET['cname']) || !isset($_GET['cid']) || !isset($_GET['scid']) || !isset($_GET['scname'])){
-  header('Location: php/error.php');
-}
-
-$cid = $_GET['cid'];
-$scid = $_GET['scid'];
-$cname = $_GET['cname'];
-$scname = $_GET['scname'];
-$pid= null;
-
-if(isset($_GET['pid'])){
-  $pid = $_GET['pid'];
-
-  updateReadCount($pid, $scid, $cid);
-}
+ 
 
 
-   $catresult = getCategory();
-
-
-
-                      function get_snippet( $str, $wordCount=50) {
+function get_snippet( $str, $wordCount=50) {
                          return implode( 
                            '', 
                            array_slice( 
@@ -46,16 +29,12 @@ if(isset($_GET['pid'])){
                          );
                        }
 
-
- 
-
-
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-	<title><?php echo $scname;?></title>
+	<title>SWOTTA | Search Result</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -75,68 +54,6 @@ if(isset($_GET['pid'])){
 <link rel="stylesheet" type="text/css" href="assets/css/contact.css">
 <link rel="shortcut icon" type="image/png" href="images/icon/favicon.png"/>
 
-
-
-<script type="text/javascript">
-  function addComment(pid){
-    var comment = document.getElementById("commenttext").value;
-
-     var xmlhttp;
-       
-       
-          if (window.XMLHttpRequest){
-
-                                  xmlhttp = new XMLHttpRequest();
-
-                                  }
-
-                                   else{ 
-                                     xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-                                  }
-
-                               xmlhttp.onreadystatechange = function(){
-                                 
-                                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                                        document.getElementById("commentsdiv").innerHTML = xmlhttp.responseText;
-                                    }
-
-                               }
-
-                              xmlhttp.open("GET", "php/commentsModel.php?pid="+pid+"&comment="+comment, true);
-                              xmlhttp.send();
-                            
-                    return;  
-  }
-
-
-  function deleteComment(id, pid){
-     var xmlhttp;
-       
-       
-          if (window.XMLHttpRequest){
-
-                                  xmlhttp = new XMLHttpRequest();
-
-                                  }
-
-                                   else{ 
-                                     xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-                                  }
-
-                               xmlhttp.onreadystatechange = function(){
-                                 
-                                 if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                                        document.getElementById("commentsdiv").innerHTML = xmlhttp.responseText;
-                                    }
-
-                               }
-
-                              xmlhttp.open("GET", "php/commentsModel.php?id="+id+"&pid="+pid+"&delete="+true, true);
-                              xmlhttp.send();
-                            
-                    return;  
- }
-</script>
 
 
 </head>
@@ -210,14 +127,17 @@ if(isset($_GET['pid'])){
      <!-- Body Section -->
 
 	      <section class="bodysection">
-	         <!-- Body Head -->
-	           <div class="bodyhead"> 
-					<span>
-						<i class="fa fa-home fa-3x"></i>
-						<?php echo " > ".$cname." > ".$scname; ?>
-					</span>
-	           </div>
-	         <!-- End Body Head -->
+
+        <!-- Body Head -->
+             <div class="bodyhead"> 
+          <span>
+            <i class="fa fa-home fa-3x"></i>
+            <?php echo " > Search Results" ?>
+          </span>
+             </div>
+           <!-- End Body Head -->
+        
+	         
 			  
 			  <!-- Contents Of the body -->
               <div class="contentcontainer">
@@ -225,75 +145,17 @@ if(isset($_GET['pid'])){
 					      <?php
                      
 
-					      	   
                       $flag=false;
-                      $cnt=1;
-                       $specific = null;
+                      $cnt = 1;
 
+ 
+					      	    
+                        $result = getAllContentsBySearch($searchtext);
+                          
 
-                      if(isset($pid)){
-                           $r = getSpecific($pid);
-                           $specific = mysqli_fetch_assoc($r);
-
-                           $flag=true;
-
-
-                           printf('
-
-                            <div class="row">
-                                 
-                                <div class="col col-md-1">
-                                </div>
-                                 
-                                 
-
-                                <div class="col col-md-10">');
-
-                                   if(!empty($specific['image'])){
-                                            printf('<img src="%s" >', $specific['image']);
-                                         }
-                                         printf('
-                                          
-                                          <h3 class="text-capitalize">%s</h3>
-                                          <p class="created">at %s</p>
-                                        
-                                        <div class="newsbody">
-                                          %s
-                                        </div>', $specific['head'], $specific['createdat'],br2nl($specific['body']));
-
-
-
-                               printf(' </div>
-                                <div class="col col-md-1">
-                                </div>
-                                </div>');
-
-                               printf('
-                                 <br><br>
-                                <div class="row">
-                                    <div class="col-md-1"></div>
-                                    
-
-                                    <div class="col-md-10" id="commentsdiv">');
-
-                                         echo getComments($pid);
-
-                                    printf('<div>
-
-
-                                    <div class="col-md-1"></div>
-                                </div>
-
-
-
-                                ');
-                        }
-
-                        else{
-                              $result = getContents($cid, $scid);
-
-                               while($news = mysqli_fetch_assoc($result)){
+                         while($news=mysqli_fetch_assoc($result)){
                                    $flag=true;
+
 
                                    $tmpr = getSubCategoryByScid($news['scid']);
                                    $subcat = mysqli_fetch_assoc($tmpr);
@@ -314,29 +176,31 @@ if(isset($_GET['pid'])){
                                            /*if(!empty($news['image'])){
                                                     printf('<img src="%s" >', $news['image']);
                                                  } */
-
                                                  printf('
+                                                  
+
                                                   <div class="panel panel-default">
 
-                                                    <div class="panel-heading">
-                                                        <h3 class="text-capitalize">%s</h3>
-                                                        <p class="created">at %s</p>
-                                                    </div>
-                                                 
-                                                 
-                                                    <div class="panel-body">
-                                                      %s
-                                                    </div>
-                                                 
-                                                    <div class="panel-footer">
-                                                          <spna style="color: Red; margin-top: 5px;"> 
+                                                      <div class="panel-heading">
+                                                          <h3 class="text-capitalize">%s</h3>
+                                                          <p class="created">at %s</p>
+                                                       </div>
+                                                      
+                                                      <div class="panel-body">
+                                                        %s
+                                                      </div>
+
+                                                      <div class="panel-footer"
+
+                                                          <span> 
 
                                                                 <a class="readmore" href="newsdetails.php?cname=%s&scname=%s&cid=%s&scid=%s&pid=%s">
                                                                 READ MORE
                                                                 </a>
 
-                                                          <span>
-                                                    </div>
+                                                          </span>
+
+                                                      </div>
 
                                                 </div>', $news['head'], $news['createdat'], get_snippet($news['body']),$cat['name'], $subcat['name'], $news['cid'], $news['scid'], $news['id']);
 
@@ -346,25 +210,19 @@ if(isset($_GET['pid'])){
                                         <div class="col col-md-1">
                                         </div>
                                         </div>');
+                                   
                                      
 
-                                }
+                               } 
+                      
+                     
+                            
 
-                              
-
-                              }
-
-                           
-                                    
-                           
-                               if(!$flag){
+                            if(!$flag){
                                   print('<center>
-                                      <h3>Currently No news in this category !! Please visit later<h3>
+                                      <h3>No Result Found<h3>
                                     </center>');
                                }
-
-
-
                                 
 					      ?>
 						
@@ -377,7 +235,7 @@ if(isset($_GET['pid'])){
 
 	  <!-- End Body Section -->
 
-       <div style="border-top: 1px dashed black; margin-top: 50px;"></div>
+     <div style="border-top: 1px dashed black; margin-top: 50px;"></div>
 
      <div class="footer_bottom_area">
       <div class="footer_menu">
@@ -398,7 +256,6 @@ if(isset($_GET['pid'])){
         <p>Trade marks and images used in the design are the copyright of their respective owners and are used for demo purposes only.</p>
       </div>
     </div>
-
 
 
      </div>
@@ -425,3 +282,6 @@ $('.bxslider').bxSlider({
 
 </body>
 </html>
+
+
+ 

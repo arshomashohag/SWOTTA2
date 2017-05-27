@@ -75,15 +75,9 @@ if(isset($_GET['id'])){
 
 }
 
-function breakToNewline($text){
-    
-    $breaks = array("<br />","<br>","<br/>");  
-    $text = str_ireplace($breaks, "\r\n", $text);
-
-    return $text;
+ function br2nl( $input ) {
+    return preg_replace('/<br\s?\/?>/ius', "\n", str_replace("\n","",str_replace("\r","", htmlspecialchars_decode($input))));
 }
-
-
 
  
 ?>
@@ -108,6 +102,7 @@ function breakToNewline($text){
 <link rel="stylesheet" type="text/css" href="assets/css/myStyle.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="assets/css/responsive.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="assets/css/jquery.bxslider.css" media="screen" />
+<link rel="shortcut icon" type="image/png" href="images/icon/favicon.png"/>
 
 
 
@@ -171,9 +166,9 @@ function breakToNewline($text){
       <span class="top_menu">
         <ul>
           <li><a href="index.php">Home</a></li>
-          <li><a href="#">About</a></li>
-          <li><a href="#">Contact us</a></li>
-          <li><a href="#">Subscribe</a></li>
+          <li><a href="about.php">About</a></li>
+          <li><a href="contact.php">Contact us</a></li>
+          <li><a href="newsletters.php">Subscribe</a></li>
             <?php 
           if(isset($_SESSION['email'])){
                 $email=$_SESSION['email'];
@@ -249,7 +244,7 @@ function breakToNewline($text){
                                         <div class="form-group">
                                               <label for="inputEmail3" class="col-sm-3 control-label">Article</label>
                                               <div class="col-sm-9">
-                                                <textarea  name="article" type="text" class="form-control" id="inputtext"  rows="8" required><?php echo  breakToNewline($body) ; ?></textarea>
+                                                <textarea  name="article" type="text" class="form-control" id="inputtext"  rows="8" required><?php echo  br2nl($body) ; ?></textarea>
                                               </div>
                                         </div>
                                          <div class="form-group">

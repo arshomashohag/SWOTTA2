@@ -1,11 +1,12 @@
 <?php
-    include_once('php/dbConnection.php');
     include_once('php/allFunctions.php');
+    include_once('php/dbConnection.php');
+    
     
     ob_start();
         session_start();
         
-         if(!isset($_SESSION['email']) || !isset($_SESSION['admin'])){
+         if(!isset($_SESSION['admin'])){
             header("Location: php/error.php");
         }
 
